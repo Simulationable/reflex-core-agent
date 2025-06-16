@@ -1,0 +1,6 @@
+@ReflexCoreAgent_HostAddress = http://localhost:5037
+
+GET {{ReflexCoreAgent_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
