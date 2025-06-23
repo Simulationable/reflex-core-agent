@@ -1,0 +1,28 @@
+﻿<aside class="w-64 h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100 border-r border-gray-200 shadow-sm hidden md:flex flex-col">
+    <div class="p-6 border-b border-gray-200">
+        <h1 class="text-2xl font-extrabold text-blue-600 tracking-tight">ReflexCore</h1>
+        <p class="text-xs text-gray-400 mt-1">AI Agent System</p>
+    </div>
+
+    <nav class="flex-1 px-4 py-6 space-y-1 text-sm text-gray-700">
+        <a asp-page="/Index"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-100/60 hover:text-blue-800 transition font-medium group">
+            <span class="text-xl group-hover:scale-110 transition">📊</span>
+            <span>Dashboard</span>
+        </a>
+        <a asp-page="/Agents/Index"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-pink-100/50 hover:text-pink-700 transition font-medium group">
+            <span class="text-xl group-hover:scale-110 transition">🧠</span>
+            <span>Agents</span>
+        </a>
+        <a asp-page="/Knowledge/Index"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-yellow-100/50 hover:text-yellow-700 transition font-medium group">
+            <span class="text-xl group-hover:scale-110 transition">📁</span>
+            <span>Knowledge</span>
+        </a>
+    </nav>
+
+    <div class="p-4 text-xs text-gray-400 border-t border-gray-200">
+        © 2025 ReflexCore Inc.
+    </div>
+</aside>

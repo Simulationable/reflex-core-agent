@@ -1,0 +1,71 @@
+﻿@page
+@model ReflexCoreAgent.Pages.Knowledge.CreateModel
+@{
+    ViewData["Title"] = "เพิ่มรายการความรู้";
+}
+
+<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2">🧠 เพิ่มรายการความรู้</h1>
+
+    <form method="post" class="space-y-8">
+        <!-- ส่วนข้อมูลหลัก -->
+        <div class="bg-white shadow rounded-lg p-6 space-y-6">
+            <h2 class="text-xl font-semibold text-gray-800">📄 รายละเอียดความรู้</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="Knowledge.Question" class="block text-sm font-medium text-gray-700">คำถาม</label>
+                    <input asp-for="Knowledge.Question" class="mt-1 block w-full rounded border-gray-300 shadow-sm" />
+                    <span asp-validation-for="Knowledge.Question" class="text-red-500 text-sm" />
+                </div>
+
+                <div>
+                    <label asp-for="Knowledge.Category" class="block text-sm font-medium text-gray-700">หมวดหมู่</label>
+                    <input asp-for="Knowledge.Category" class="mt-1 block w-full rounded border-gray-300 shadow-sm" placeholder="เช่น: Billing, Policy" />
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Knowledge.Answer" class="block text-sm font-medium text-gray-700">คำตอบ</label>
+                <textarea asp-for="Knowledge.Answer" rows="5" class="mt-1 block w-full rounded border-gray-300 shadow-sm"></textarea>
+                <span asp-validation-for="Knowledge.Answer" class="text-red-500 text-sm" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="Knowledge.TagsCsv" class="block text-sm font-medium text-gray-700">แท็ก (คั่นด้วย ,)</label>
+                    <input asp-for="Knowledge.TagsCsv" class="mt-1 block w-full rounded border-gray-300 shadow-sm" placeholder="refund,policy,7days" />
+                </div>
+
+                <div>
+                    <label asp-for="Knowledge.Source" class="block text-sm font-medium text-gray-700">แหล่งที่มา</label>
+                    <input asp-for="Knowledge.Source" class="mt-1 block w-full rounded border-gray-300 shadow-sm" placeholder="Manual, Chatbot log, URL" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="Knowledge.Confidence" class="block text-sm font-medium text-gray-700">Confidence (0.0 - 1.0)</label>
+                    <input asp-for="Knowledge.Confidence" type="number" step="0.01" min="0" max="1" class="mt-1 block w-full rounded border-gray-300 shadow-sm" />
+                </div>
+
+                <div>
+                    <label asp-for="Knowledge.AgentId" class="block text-sm font-medium text-gray-700">เชื่อมกับ Agent</label>
+                    <select asp-for="Knowledge.AgentId" asp-items="Model.AgentOptions" class="mt-1 block w-full rounded border-gray-300 shadow-sm"></select>
+                    <span asp-validation-for="Knowledge.AgentId" class="text-red-500 text-sm" />
+                </div>
+            </div>
+        </div>
+
+        <!-- ปุ่มบันทึก -->
+        <div class="text-right">
+            <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition">
+                ✅ บันทึกข้อมูล
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

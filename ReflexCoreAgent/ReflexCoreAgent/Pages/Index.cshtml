@@ -1,11 +1,42 @@
 ﻿@page
 @model ReflexCoreAgent.Pages.IndexModel
+@{
+    ViewData["Title"] = "แดชบอร์ด";
+}
 
-<h1 class="text-2xl font-bold mb-4">ReflexCore UI</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                📊 แดชบอร์ด
+            </h1>
+            <p class="text-sm text-gray-500 mt-1">ภาพรวมสถานะล่าสุดของระบบคุณ</p>
+        </div>
+        <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 text-sm rounded-md flex items-center gap-2 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7" />
+            </svg>
+            ออกจากระบบ
+        </button>
+    </div>
 
-<div hx-get="/api/status"
-     hx-trigger="load"
-     hx-swap="innerHTML"
-     class="p-4 bg-gray-100 rounded shadow">
-    Loading status...
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white shadow-sm rounded-lg p-5">
+            <div class="text-gray-500 text-sm">จำนวน Agent</div>
+            <div class="text-2xl font-bold text-gray-900 mt-1">-</div>
+        </div>
+        <div class="bg-white shadow-sm rounded-lg p-5">
+            <div class="text-gray-500 text-sm">Moderation ที่เปิดใช้งาน</div>
+            <div class="text-2xl font-bold text-gray-900 mt-1">-</div>
+        </div>
+        <div class="bg-white shadow-sm rounded-lg p-5">
+            <div class="text-gray-500 text-sm">คำขอวันนี้</div>
+            <div class="text-2xl font-bold text-gray-900 mt-1">-</div>
+        </div>
+        <div class="bg-white shadow-sm rounded-lg p-5">
+            <div class="text-gray-500 text-sm">คำขอถูกบล็อก</div>
+            <div class="text-2xl font-bold text-red-600 mt-1">-</div>
+        </div>
+    </div>
 </div>

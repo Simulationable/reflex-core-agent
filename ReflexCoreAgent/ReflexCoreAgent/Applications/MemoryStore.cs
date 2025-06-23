@@ -1,25 +1,35 @@
-﻿using ReflexCoreAgent.Domain.Model;
+﻿using ReflexCoreAgent.Domain.Entities;
+using ReflexCoreAgent.Domain.Model;
 using ReflexCoreAgent.Interfaces;
 
 namespace ReflexCoreAgent.Applications
 {
-    public class MemoryStore : IMemoryStore
+    public class InteractionService : IInteractionService
     {
-        private readonly Dictionary<string, UserProfile> _memory = new();
+        private readonly IUnitOfWork _uow;
 
-        public Task<UserProfile?> LoadProfileAsync(string userId)
+        public InteractionService(IUnitOfWork uow)
         {
-            _memory.TryGetValue(userId, out var profile);
-            return Task.FromResult(profile);
+            _uow = uow;
         }
 
-        public Task SaveInteractionAsync(string userId, string inputTh, string responseTh)
+        public async Task SaveInteractionAsync(string userId, string inputTh, string responseTh)
         {
-            if (!_memory.ContainsKey(userId))
-                _memory[userId] = new UserProfile { UserId = userId };
+            var interaction = new UserInteraction
+            {
+                UserId = userId,
+                InputTh = inputTh,
+                ResponseTh = responseTh
+            };
 
-            _memory[userId].RecentTopics.Add(inputTh);
-            return Task.CompletedTask;
+            await _uow.UserInteractions.SaveInteractionAsync(interaction);
+            await _uow.SaveChangesAsync();
+        }
+
+        public async Task<List<UserInteraction>> GetHistoryAsync(string userId)
+        {
+            return await _uow.UserInteractions.GetByUserIdAsync(userId);
         }
     }
+
 }

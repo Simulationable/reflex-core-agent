@@ -8,32 +8,21 @@ namespace ReflexCoreAgent.Applications
     {
         private readonly ITranslator _translator;
         private readonly ILineMessenger _lineMessenger;
+        private readonly IKnowledgeService _knowledgeService;
         private readonly ILogger<AgentOrchestrator> _logger;
 
         public AgentOrchestrator(ITranslator translator,
             ILineMessenger lineMessenger,
+            IKnowledgeService knowledgeService,
             ILogger<AgentOrchestrator> logger)
         {
             _translator = translator;
             _lineMessenger = lineMessenger;
+            _knowledgeService = knowledgeService;
             _logger = logger;
         }
 
-        private readonly Dictionary<string, string> _faq = new()
-        {
-            { "ระยะเวลารับประกัน", "สินค้าของเรารับประกัน 1 ปีเต็มนับจากวันซื้อ" },
-            { "วิธีใช้งาน", "สามารถศึกษาวิธีใช้งานได้จากคู่มือในกล่องสินค้า หรือสอบถามเพิ่มเติมได้ที่ Line Official" },
-        };
-
-        private Task<string> SearchAsync(string question)
-        {
-            foreach (var kv in _faq)
-                if (question.Contains(kv.Key)) return Task.FromResult(kv.Value);
-
-            return Task.FromResult(string.Empty);
-        }
-
-        public async Task<string> HandleMessageAsync(LineWebhookPayload payload)
+        public async Task<string> HandleMessageAsync(LineWebhookPayload payload, Guid agentId)
         {
             var evt = payload.Events.FirstOrDefault();
             if (evt == null || evt.Type != "message" || evt.Message?.Type != "text")
@@ -43,9 +32,9 @@ namespace ReflexCoreAgent.Applications
             }
             var userMessage = evt.Message.Text;
             _logger.LogInformation("User Message: {UserMessage}", userMessage);
-            var knowledge = await SearchAsync(userMessage);
+            string knowledge = await _knowledgeService.SearchAnswerAsync(userMessage, agentId);
             _logger.LogInformation("Knowledge: {Knowledge}", knowledge);
-            var responseTh = await _translator.Answer(userMessage, knowledge);
+            var responseTh = await _translator.Answer(userMessage, knowledge, agentId);
             _logger.LogInformation("Translated response (TH): {ResponseTh}", responseTh);
             await _lineMessenger.ReplyAsync(evt.ReplyToken, responseTh);
             return responseTh;

@@ -20,7 +20,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "POSTGRES_CONNECTION": "Host=ep-red-art-a16dnquz-pooler.ap-southeast-1.aws.neon.tech;Port=5432;Database=neondb;Username=neondb_owner;Password=npg_MygPNjGAFB17;SslMode=Require;Trust Server Certificate=true"
       }
     },
     "WSL": {

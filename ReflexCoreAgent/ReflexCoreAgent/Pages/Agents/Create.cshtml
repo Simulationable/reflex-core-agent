@@ -1,0 +1,130 @@
+﻿@page
+@model ReflexCoreAgent.Pages.Agents.CreateModel
+@{
+    ViewData["Title"] = "เพิ่ม Agent";
+}
+
+<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2">➕ เพิ่ม Agent</h1>
+
+    <form method="post" class="space-y-8">
+        <!-- ข้อมูลทั่วไปของ Agent -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📄 ข้อมูล Agent</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="Agent.Name" class="block text-sm font-medium text-gray-700">ชื่อ Agent</label>
+                    <input asp-for="Agent.Name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    <span asp-validation-for="Agent.Name" class="text-red-500 text-sm" />
+                </div>
+
+                <div>
+                    <label asp-for="Agent.Purpose" class="block text-sm font-medium text-gray-700">จุดประสงค์</label>
+                    <input asp-for="Agent.Purpose" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                    <span asp-validation-for="Agent.Purpose" class="text-red-500 text-sm" />
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label asp-for="Agent.PromptTemplate" class="block text-sm font-medium text-gray-700">Prompt Template</label>
+                <textarea asp-for="Agent.PromptTemplate" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+            </div>
+
+            <div class="flex items-center mt-4">
+                <input asp-for="Agent.EnableModeration" type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                <label asp-for="Agent.EnableModeration" class="ml-2 block text-sm text-gray-700">เปิดระบบ Moderation</label>
+            </div>
+        </div>
+
+        <!-- กฎ Moderation -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">🛡️ กฎ Moderation</h2>
+                <button type="button" class="text-sm text-blue-600 hover:underline" onclick="addRule()">➕ เพิ่มกฎ</button>
+            </div>
+
+            <div id="rules-container" class="space-y-4">
+                @{
+                    var rules = Model.Agent.ModerationRules.ToList();
+                }
+                @for (int i = 0; i < rules.Count; i++)
+                {
+                    <div class="border rounded-lg p-4 bg-gray-50 rule-item">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium">Keyword</label>
+                                <input name="Agent.ModerationRules[@i].Keyword" value="@rules[i].Keyword" class="mt-1 block w-full rounded border-gray-300" required />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium">Response Message</label>
+                                <input name="Agent.ModerationRules[@i].ResponseMessage" value="@rules[i].ResponseMessage" class="mt-1 block w-full rounded border-gray-300" required />
+                            </div>
+                        </div>
+                        <button type="button" class="mt-2 text-red-600 hover:underline text-sm" onclick="removeRule(this)">ลบกฎนี้</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Llama Config -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">⚙️ ค่าการตั้งค่า Model (Llama Config)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label asp-for="Agent.Config.NPredict" class="block text-sm font-medium">n_predict</label>
+                    <input asp-for="Agent.Config.NPredict" class="mt-1 block w-full rounded border-gray-300" />
+                </div>
+                <div>
+                    <label asp-for="Agent.Config.Temperature" class="block text-sm font-medium">temperature</label>
+                    <input asp-for="Agent.Config.Temperature" class="mt-1 block w-full rounded border-gray-300" />
+                </div>
+                <div>
+                    <label asp-for="Agent.Config.TopP" class="block text-sm font-medium">top_p</label>
+                    <input asp-for="Agent.Config.TopP" class="mt-1 block w-full rounded border-gray-300" />
+                </div>
+                <div>
+                    <label asp-for="Agent.Config.TopK" class="block text-sm font-medium">top_k</label>
+                    <input asp-for="Agent.Config.TopK" class="mt-1 block w-full rounded border-gray-300" />
+                </div>
+            </div>
+        </div>
+
+        <!-- ปุ่มส่ง -->
+        <div class="text-right">
+            <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition">
+                ✅ บันทึก Agent
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function addRule() {
+            const container = document.getElementById('rules-container');
+            const index = container.querySelectorAll('.rule-item').length;
+
+            const html = `
+            <div class="border rounded-lg p-4 bg-gray-50 rule-item">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Keyword</label>
+                        <input name="Agent.ModerationRules[${index}].Keyword" class="mt-1 block w-full rounded border-gray-300" required />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Response Message</label>
+                        <input name="Agent.ModerationRules[${index}].ResponseMessage" value="ขออภัยค่ะ ระบบไม่สามารถให้ข้อมูลในส่วนนี้ได้" class="mt-1 block w-full rounded border-gray-300" required />
+                    </div>
+                </div>
+                <button type="button" class="mt-2 text-red-600 hover:underline text-sm" onclick="removeRule(this)">ลบกฎนี้</button>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function removeRule(el) {
+            el.closest('.rule-item').remove();
+        }
+    </script>
+}

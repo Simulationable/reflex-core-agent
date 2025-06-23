@@ -1,21 +1,43 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ReflexCoreAgent.Interfaces;
+using System.Security.Claims;
 
 namespace ReflexCoreAgent.Pages.Login
 {
     public class IndexModel : PageModel
     {
-        [BindProperty] public string Username { get; set; }
-        [BindProperty] public string Password { get; set; }
+        private readonly IUserService _userService;
 
+        public IndexModel(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+        [BindProperty] public string Username { get; set; } = string.Empty;
+        [BindProperty] public string Password { get; set; } = string.Empty;
         public string? ErrorMessage { get; set; }
 
-        public void OnGet() { }
-
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (Username == "admin" && Password == "1234")
+            var user = await _userService.AuthenticateAsync(Username, Password);
+
+            if (user != null)
             {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role ?? "User")
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
                 return RedirectToPage("/Index");
             }
 

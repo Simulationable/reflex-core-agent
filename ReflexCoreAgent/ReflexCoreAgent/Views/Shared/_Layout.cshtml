@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authorization
+
+@{
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -6,13 +13,26 @@
 
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="~/css/output.css" rel="stylesheet" asp-append-version="true" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans p-6">
-    <div class="max-w-4xl mx-auto bg-white rounded shadow p-6">
-        @RenderBody()
+<body class="bg-gray-100 text-gray-900 font-sans">
+    <div class="min-h-screen flex">
+        @if (isAuthenticated)
+        {
+            @await Html.PartialAsync("_Sidebar")
+        }
+
+        <main class="flex-1">
+            @if (isAuthenticated)
+            {
+                @await Html.PartialAsync("_Topbar")
+            }
+
+            @RenderBody()
+        </main>
     </div>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

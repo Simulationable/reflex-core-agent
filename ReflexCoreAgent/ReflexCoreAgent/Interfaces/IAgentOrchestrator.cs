@@ -4,6 +4,6 @@ namespace ReflexCoreAgent.Interfaces
 {
     public interface IAgentOrchestrator
     {
-        Task<string> HandleMessageAsync(LineWebhookPayload evt);
+        Task<string> HandleMessageAsync(LineWebhookPayload evt, Guid agentId);
     }
 }

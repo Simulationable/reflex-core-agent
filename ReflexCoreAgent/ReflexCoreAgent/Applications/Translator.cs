@@ -8,78 +8,26 @@ namespace ReflexCoreAgent.Applications
 {
     public class Translator : ITranslator
     {
-        public async Task<string> TranslateToEnglish(string thai)
+        private readonly IModerationFilter _moderationFilter;
+
+        public Translator(IModerationFilter moderationFilter)
         {
-            string prompt = $"Translate this Thai sentence to English. Respond with only the English sentence:\n\"{thai}\"";
-            var response = await LlamaCppHelper.RunAsync("thaigpt", prompt, "translation");
-            var parsed = JsonSerializer.Deserialize<LlamaCppResponse>(response);
-            var contentOnly = parsed?.content?.Trim('"', '\n', '\r', ' ');
-            return contentOnly;
+            _moderationFilter = moderationFilter;
         }
 
-        public async Task<string> TranslateToThai(string english)
+        public async Task<string> Answer(string intent, string knowledge, Guid agentId)
         {
-            string prompt = $"Translate this English sentence to Thai. Respond with only the Thai sentence:\n\"{english}\"";
-            var response = await LlamaCppHelper.RunAsync("thaigpt", prompt, "translation");
-            var parsed = JsonSerializer.Deserialize<LlamaCppResponse>(response);
-            var contentOnly = parsed?.content?.Trim('"', '\n', '\r', ' ');
-            return contentOnly;
-        }
-
-        public async Task<string> Answer(string intent, string knowledge)
-        {
-            if (intent.Contains("เจาะระบบ") || intent.Contains("แฮก") || intent.Contains("hack"))
+            var (isBlocked, message, agent) = await _moderationFilter.CheckAsync(intent, agentId);
+            if (isBlocked)
             {
-                return "ขออภัยค่ะ ระบบไม่สามารถให้ข้อมูลในส่วนนี้ได้";
+                return message;
             }
 
-            string prompt = $@"
-                คุณคือตัวแทนฝ่ายบริการลูกค้าที่ตอบคำถามอย่างสุภาพ เป็นธรรมชาติ และมีความหลากหลาย โดยใช้เฉพาะข้อมูลที่ให้ไว้ในระบบเท่านั้น ห้ามเดาหรือแต่งเติมข้อมูลเพิ่มเติมโดยเด็ดขาด หากไม่มีข้อมูล ให้ตอบด้วยถ้อยคำที่ต่างกันเล็กน้อย ไม่ซ้ำรูปแบบเดิม แม้เนื้อหาจะคล้ายกันก็ตาม
+            string prompt = agent.PromptTemplate
+                .Replace("{knowledge}", string.IsNullOrWhiteSpace(knowledge) ? "ไม่มีข้อมูล" : knowledge)
+                .Replace("{intent}", intent);
 
-                ### ตัวอย่าง:
-
-                ข้อมูลจากระบบ:
-                ไม่มีข้อมูล
-
-                คำถาม:
-                มีโปรโมชั่นอะไรบ้างคะ?
-                คำตอบ:
-                ขออภัยค่ะ ขณะนี้ยังไม่มีข้อมูลเกี่ยวกับโปรโมชั่นในระบบนะคะ
-
-                ข้อมูลจากระบบ:
-                ไม่มีข้อมูล
-
-                คำถาม:
-                มีแพ็กเกจอะไรแนะนำไหม
-                คำตอบ:
-                ตอนนี้ยังไม่มีข้อมูลเกี่ยวกับแพ็กเกจให้บริการในระบบค่ะ
-
-                ข้อมูลจากระบบ:
-                ไม่มีข้อมูล
-
-                คำถาม:
-                มีรายละเอียดเพิ่มเติมไหม
-                คำตอบ:
-                ข้อมูลสำหรับคำถามนี้ยังไม่มีในระบบขณะนี้ค่ะ
-
-                ข้อมูลจากระบบ:
-                ไม่มีข้อมูล
-
-                คำถาม:
-                บริการนี้มีเงื่อนไขอย่างไรบ้าง
-                คำตอบ:
-                ขออภัยค่ะ ยังไม่มีการระบุข้อมูลเกี่ยวกับเงื่อนไขของบริการนี้ไว้ในระบบนะคะ
-
-                ### ตอนนี้:
-
-                ข้อมูลจากระบบ:
-                {knowledge ?? "ไม่มีข้อมูล"}
-
-                คำถาม:
-                {intent}
-                คำตอบ:";
-
-            var response = await LlamaCppHelper.RunAsync("thaigpt", prompt, "translation");
+            var response = await LlamaCppHelper.RunAsync("thaigpt", prompt, agent!.Config);
             var parsed = JsonSerializer.Deserialize<LlamaCppResponse>(response);
             var result = Regex.Replace(parsed.content, @"^\s+|\s+$", "");
             return result;

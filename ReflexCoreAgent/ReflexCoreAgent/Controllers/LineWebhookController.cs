@@ -20,7 +20,9 @@ namespace ReflexCoreAgent.Controllers
         [Route("webhook")]
         public async Task<IActionResult> Post([FromBody] LineWebhookPayload payload)
         {
-            var reply = await _agent.HandleMessageAsync(payload);
+            var agentName = new Guid(HttpContext.Request.Query["agent"].ToString());
+
+            var reply = await _agent.HandleMessageAsync(payload, agentName);
             return Ok(reply);
         }
     }
