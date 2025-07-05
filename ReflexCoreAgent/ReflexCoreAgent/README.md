@@ -22,7 +22,7 @@
 ### 1. Clone โปรเจกต์
 
 ```bash
-git clone https://github.com/your-org/reflexcore.git
+git clone https://github.com/Simulationable/reflex-core-agent
 cd reflexcore
 ```
 
