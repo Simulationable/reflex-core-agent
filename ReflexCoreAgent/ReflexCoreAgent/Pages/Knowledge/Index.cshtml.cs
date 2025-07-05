@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ReflexCoreAgent.Domain.Entities;
 using ReflexCoreAgent.Domain.Model;
-using ReflexCoreAgent.Interfaces;
+using ReflexCoreAgent.Interfaces.Services;
 
 namespace ReflexCoreAgent.Pages.Knowledge
 {
@@ -49,8 +49,23 @@ namespace ReflexCoreAgent.Pages.Knowledge
         public async Task<IActionResult> OnPostDeleteKnowledgeAsync(Guid id)
         {
             await _knowledgeService.DeleteAsync(id);
-            return new JsonResult(new { success = true });
+
+            Page = int.TryParse(Request.Query["page"], out var p) ? p : 1;
+
+            Result = await _knowledgeService.GetPaginatedAsync(Search, IsActiveFilter, Page, PageSize);
+
+            return new JsonResult(new
+            {
+                success = true,
+                data = new
+                {
+                    result = Result.Items,
+                    totalPages = Result.TotalPages,
+                    currentPage = Result.Page
+                }
+            });
         }
+
     }
 
 }

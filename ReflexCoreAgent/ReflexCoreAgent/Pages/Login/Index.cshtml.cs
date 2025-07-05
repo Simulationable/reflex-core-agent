@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ReflexCoreAgent.Interfaces;
+using ReflexCoreAgent.Interfaces.Services;
 using System.Security.Claims;
 
 namespace ReflexCoreAgent.Pages.Login

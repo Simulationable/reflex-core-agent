@@ -10,6 +10,7 @@ namespace ReflexCoreAgent.Interfaces
         IModerationRuleRepository ModerationRules { get; }
         ILlamaRequestConfigRepository LlamaRequestConfig { get; }
         IKnowledgeRepository Knowledge { get; }
+        ICompanyProfileRepository CompanyProfiles { get; }
         Task<int> SaveChangesAsync();
     }
 }

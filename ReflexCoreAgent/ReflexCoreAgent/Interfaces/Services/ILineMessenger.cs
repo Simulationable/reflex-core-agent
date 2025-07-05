@@ -1,4 +1,4 @@
-﻿namespace ReflexCoreAgent.Interfaces
+﻿namespace ReflexCoreAgent.Interfaces.Services
 {
     public interface ILineMessenger
     {

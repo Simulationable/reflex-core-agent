@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReflexCoreAgent.Domain.Entities;
-using ReflexCoreAgent.Interfaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ReflexCoreAgent.Interfaces.Services;
 
 namespace ReflexCoreAgent.Pages.Knowledge
 {

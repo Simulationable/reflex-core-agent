@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using PdfSharpCore.Fonts;
 using ReflexCoreAgent.Applications;
+using ReflexCoreAgent.Helpers;
 using ReflexCoreAgent.Infrastructure.Data;
 using ReflexCoreAgent.Infrastructure.Repositories;
 using ReflexCoreAgent.Interfaces;
 using ReflexCoreAgent.Interfaces.Repositories;
+using ReflexCoreAgent.Interfaces.Services;
 using System;
 
 var connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
@@ -15,6 +18,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 // 🔧 Register services & implementations
+builder.Services.AddHttpClient(); 
+builder.Services.AddHttpContextAccessor();
+
+GlobalFontSettings.FontResolver = new CustomFontResolver();
+
 builder.Services.AddScoped<ITranslator, Translator>();
 builder.Services.AddScoped<ILineMessenger, LineMessenger>();
 builder.Services.AddScoped<IAgentOrchestrator, AgentOrchestrator>();
@@ -24,7 +32,11 @@ builder.Services.AddScoped<IAgentService, AgentService>();
 builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 builder.Services.AddScoped<IEmbeddingService, DeterministicEmbeddingService>();
 builder.Services.AddScoped<IModerationFilter, ModerationFilter>();
-
+builder.Services.AddScoped<ICalendarService, CalendarService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ICompanyProfileService, CompanyProfileService>();
+builder.Services.AddScoped<ITimeParser, SimpleThaiTimeParser>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -33,6 +45,8 @@ builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 builder.Services.AddScoped<IModerationRuleRepository, ModerationRuleRepository>();
 builder.Services.AddScoped<ILlamaRequestConfigRepository, LlamaRequestConfigRepository>();
 builder.Services.AddScoped<IKnowledgeRepository, KnowledgeRepository>();
+builder.Services.AddScoped<ICompanyProfileRepository, CompanyProfileRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
 // ✅ Add controllers + OpenAPI (Swagger)
 builder.Services.AddControllers();

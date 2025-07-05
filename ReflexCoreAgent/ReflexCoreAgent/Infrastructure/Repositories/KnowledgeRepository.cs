@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReflexCoreAgent.Domain.Entities;
 using ReflexCoreAgent.Infrastructure.Data;
-using ReflexCoreAgent.Interfaces;
 using ReflexCoreAgent.Interfaces.Repositories;
+using ReflexCoreAgent.Interfaces.Services;
 using ReflexCoreAgent.Utils;
 
 namespace ReflexCoreAgent.Infrastructure.Repositories

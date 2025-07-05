@@ -1,4 +1,4 @@
-﻿using ReflexCoreAgent.Interfaces;
+﻿using ReflexCoreAgent.Interfaces.Services;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -12,9 +12,15 @@ namespace ReflexCoreAgent.Applications
         {
             _logger = logger;
         }
-        public async Task ReplyAsync(string replyToken, string message)
+
+        public async Task ReplyAsync(string replyToken, string? message)
         {
+            message = string.IsNullOrWhiteSpace(message)
+                ? "ขออภัย ระบบไม่สามารถประมวลผลคำตอบได้ในขณะนี้"
+                : message;
+
             _logger.LogInformation("Reply To: {ReplyToken}, With Message: {Message}", replyToken, message);
+
             var payload = new
             {
                 replyToken = replyToken,
@@ -24,17 +30,32 @@ namespace ReflexCoreAgent.Applications
                 }
             };
 
-            _logger.LogInformation("Payload : {Payload}", payload);
+            var payloadJson = JsonSerializer.Serialize(payload);
+            _logger.LogInformation("Payload JSON: {Payload}", payloadJson);
+
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "/yewuzL7Vuv5uorTZW9C3Vka34kLQtOqCOuSCqBqU1lnjsbQVL2pn5QfMEQLq287tX+BFtl6JU0r2MHcneBf7omQ+EKhqJDCKeAP2lxc5U/cE/9ualLPaobIE1BDrEeUmWggtpvquVlB3PQP1X2JlwdB04t89/1O/w1cDnyilFU=");
 
-            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("https://api.line.me/v2/bot/message/reply", content);
-            if (!response.IsSuccessStatusCode)
+            var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
+
+            try
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError("Failed to reply to LINE message. Status: {StatusCode}, Error: {ErrorContent}", response.StatusCode, errorContent);
-                throw new HttpRequestException($"LINE API returned {response.StatusCode}: {errorContent}");
+                var response = await client.PostAsync("https://api.line.me/v2/bot/message/reply", content);
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("❌ LINE Reply Failed | Status: {Status} | Response: {Response}",
+                        response.StatusCode, responseText);
+                }
+                else
+                {
+                    _logger.LogInformation("✅ LINE Reply Success");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "❌ Exception ขณะตอบกลับ LINE");
             }
         }
     }

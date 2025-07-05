@@ -1,6 +1,6 @@
 ﻿using ReflexCoreAgent.Domain.Response;
 using ReflexCoreAgent.Helpers;
-using ReflexCoreAgent.Interfaces;
+using ReflexCoreAgent.Interfaces.Services;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -15,22 +15,35 @@ namespace ReflexCoreAgent.Applications
             _moderationFilter = moderationFilter;
         }
 
-        public async Task<string> Answer(string intent, string knowledge, Guid agentId)
+        public async Task<string> Answer(string intent, string knowledge, Guid agentId, string? context = null)
         {
+            intent ??= string.Empty;
+            knowledge ??= string.Empty;
+            context ??= string.Empty;
+
             var (isBlocked, message, agent) = await _moderationFilter.CheckAsync(intent, agentId);
             if (isBlocked)
-            {
                 return message;
+
+            if (agent == null)
+            {
+                return string.IsNullOrWhiteSpace(knowledge)
+                    ? "ขออภัย ระบบยังไม่มีข้อมูลสำหรับคำถามนี้"
+                    : knowledge;
             }
 
-            string prompt = agent.PromptTemplate
-                .Replace("{knowledge}", string.IsNullOrWhiteSpace(knowledge) ? "ไม่มีข้อมูล" : knowledge)
-                .Replace("{intent}", intent);
+            var promptBody = agent.PromptTemplate
+                    ?.Replace("{knowledge}", string.IsNullOrWhiteSpace(knowledge) ? "ไม่มีข้อมูล" : knowledge)
+                    ?.Replace("{intent}", intent) ?? $"{intent}\n{knowledge}";
 
-            var response = await LlamaCppHelper.RunAsync("thaigpt", prompt, agent!.Config);
+            var fullPrompt = $"{context}\n{promptBody}";
+
+            var response = await LlamaCppHelper.RunAsync("thaigpt", fullPrompt, agent.Config);
             var parsed = JsonSerializer.Deserialize<LlamaCppResponse>(response);
-            var result = Regex.Replace(parsed.content, @"^\s+|\s+$", "");
-            return result;
+
+            return string.IsNullOrWhiteSpace(parsed?.content)
+                ? "ขออภัย ระบบไม่สามารถสร้างคำตอบได้ในตอนนี้"
+                : Regex.Replace(parsed.content, @"^\s+|\s+$", "");
         }
     }
 }

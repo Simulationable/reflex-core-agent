@@ -1,0 +1,68 @@
+﻿@page
+@model ReflexCoreAgent.Pages.Calendar.IndexModel
+@{
+    ViewData["Title"] = "📅 ปฏิทินนัดหมาย";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
+<div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-6">📅 ปฏิทินนัดหมายของ Agent</h1>
+
+        <form method="get" class="mb-4 flex flex-col sm:flex-row sm:items-center gap-4">
+            <div class="flex-1">
+                <label for="agentSelect" class="block text-sm font-medium text-gray-600 mb-1">เลือก Agent:</label>
+                <select id="agentSelect" name="agentId" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-100">
+                    @foreach (var agent in Model.Agents)
+                    {
+                        <option value="@agent.Id" selected="@(agent.Id == Model.SelectedAgentId)">
+                            @agent.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition">
+                    🔍 แสดงนัดหมาย
+                </button>
+            </div>
+        </form>
+
+        <div id="calendar" class="rounded-md overflow-hidden border border-gray-100 shadow-sm"></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'th',
+                timeZone: 'Asia/Bangkok',
+                height: 650,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [
+                    @foreach (var appt in Model.Appointments)
+                    {
+                        <text>
+                            {
+                                title: @Html.Raw(Json.Serialize(appt.Description)),
+                                start: "@appt.StartTime.ToString("yyyy-MM-ddTHH:mm:ss")",
+                                end: "@appt.EndTime.ToString("yyyy-MM-ddTHH:mm:ss")"
+                            },
+                        </text>
+                    }
+                ]
+            });
+            calendar.render();
+        });
+    </script>
+}
+}

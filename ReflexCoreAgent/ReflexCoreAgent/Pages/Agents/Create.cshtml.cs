@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using ReflexCoreAgent.Domain.Entities;
-using ReflexCoreAgent.Interfaces;
+using ReflexCoreAgent.Interfaces.Services;
 
 namespace ReflexCoreAgent.Pages.Agents
 {

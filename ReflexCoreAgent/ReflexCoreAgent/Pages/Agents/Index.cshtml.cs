@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ReflexCoreAgent.Domain.Entities;
 using ReflexCoreAgent.Domain.Model;
-using ReflexCoreAgent.Interfaces;
+using ReflexCoreAgent.Interfaces.Services;
 
 namespace ReflexCoreAgent.Pages.Agents
 {
@@ -49,6 +49,17 @@ namespace ReflexCoreAgent.Pages.Agents
         public async Task<IActionResult> OnPostDeleteAgentAsync(Guid id)
         {
             await _agentService.DeleteAsync(id);
+
+            var page = Request.Query["page"];
+            if (string.IsNullOrEmpty(page))
+            {
+                Page = 1;
+            }
+            else if (!string.IsNullOrEmpty(page))
+            {
+                Page = int.Parse(page);
+            }
+            Result = await _agentService.GetPaginatedAsync(Search, ModerationFilter, Page, PageSize);
 
             return new JsonResult(new { success = true });
         }

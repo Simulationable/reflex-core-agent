@@ -12,8 +12,17 @@ namespace ReflexCoreAgent.Infrastructure.Data
         public IModerationRuleRepository ModerationRules { get; }
         public ILlamaRequestConfigRepository LlamaRequestConfig { get; }
         public IKnowledgeRepository Knowledge { get; }
+        public ICompanyProfileRepository CompanyProfiles { get; }
 
-        public UnitOfWork(AppDbContext db, IUserRepository userRepository, IAgentRepository agentRepository, IModerationRuleRepository moderationRuleRepository, IKnowledgeRepository knowledge, IUserInteractionRepository userInteractions, ILlamaRequestConfigRepository llamaRequestConfig)
+        public UnitOfWork(
+            AppDbContext db, 
+            IUserRepository userRepository, 
+            IAgentRepository agentRepository, 
+            IModerationRuleRepository moderationRuleRepository, 
+            IKnowledgeRepository knowledge, 
+            IUserInteractionRepository userInteractions, 
+            ILlamaRequestConfigRepository llamaRequestConfig,
+            ICompanyProfileRepository companyProfiles)
         {
             _db = db;
             Users = userRepository;
@@ -22,6 +31,7 @@ namespace ReflexCoreAgent.Infrastructure.Data
             Knowledge = knowledge;
             UserInteractions = userInteractions;
             LlamaRequestConfig = llamaRequestConfig;
+            CompanyProfiles = companyProfiles;
         }
 
         public async Task<int> SaveChangesAsync()

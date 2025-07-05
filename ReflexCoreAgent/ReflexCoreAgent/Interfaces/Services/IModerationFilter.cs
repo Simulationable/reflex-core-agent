@@ -1,6 +1,6 @@
 ﻿using ReflexCoreAgent.Domain.Entities;
 
-namespace ReflexCoreAgent.Interfaces
+namespace ReflexCoreAgent.Interfaces.Services
 {
     public interface IModerationFilter
     {

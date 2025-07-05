@@ -1,6 +1,7 @@
 ﻿using ReflexCoreAgent.Domain.Entities;
 using ReflexCoreAgent.Domain.Model;
 using ReflexCoreAgent.Interfaces;
+using ReflexCoreAgent.Interfaces.Services;
 
 namespace ReflexCoreAgent.Applications
 {
@@ -31,5 +32,4 @@ namespace ReflexCoreAgent.Applications
             return await _uow.UserInteractions.GetByUserIdAsync(userId);
         }
     }
-
 }

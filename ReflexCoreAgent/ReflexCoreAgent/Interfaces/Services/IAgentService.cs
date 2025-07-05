@@ -1,7 +1,7 @@
 ﻿using ReflexCoreAgent.Domain.Entities;
 using ReflexCoreAgent.Domain.Model;
 
-namespace ReflexCoreAgent.Interfaces
+namespace ReflexCoreAgent.Interfaces.Services
 {
     public interface IAgentService
     {

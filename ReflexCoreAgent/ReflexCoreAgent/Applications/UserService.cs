@@ -1,5 +1,6 @@
 ﻿using ReflexCoreAgent.Infrastructure.Data;
 using ReflexCoreAgent.Interfaces;
+using ReflexCoreAgent.Interfaces.Services;
 
 namespace ReflexCoreAgent.Applications
 {

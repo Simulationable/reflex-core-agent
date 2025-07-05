@@ -85,7 +85,7 @@
 </div>
 
 @section Scripts {
-    <script>
+<script>
         let knowledgeIdToDelete = null;
 
         function openDeleteModal(id) {
@@ -102,6 +102,7 @@
 
         document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
             if (!knowledgeIdToDelete) return;
+
             fetch(`?handler=DeleteKnowledge&id=${knowledgeIdToDelete}`, {
                 method: "POST",
                 headers: {
@@ -109,8 +110,7 @@
                 }
             }).then(response => {
                 if (response.ok) {
-                    document.querySelector(`tr[data-knowledge-id="${knowledgeIdToDelete}"]`)?.remove();
-                    closeDeleteModal();
+                    window.location.reload();
                 } else {
                     alert("ไม่สามารถลบข้อมูลได้");
                     closeDeleteModal();
@@ -118,4 +118,5 @@
             });
         });
     </script>
+}
 }

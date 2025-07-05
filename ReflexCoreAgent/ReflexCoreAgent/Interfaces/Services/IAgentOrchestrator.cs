@@ -1,6 +1,6 @@
 ﻿using ReflexCoreAgent.Domain.Model;
 
-namespace ReflexCoreAgent.Interfaces
+namespace ReflexCoreAgent.Interfaces.Services
 {
     public interface IAgentOrchestrator
     {

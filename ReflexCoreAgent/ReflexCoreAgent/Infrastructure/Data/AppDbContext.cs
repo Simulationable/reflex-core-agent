@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReflexCoreAgent.Domain.Entities;
 
@@ -15,6 +16,8 @@ namespace ReflexCoreAgent.Infrastructure.Data
         public DbSet<ModerationRule> ModerationRules { get; set; }
         public DbSet<LlamaRequestConfig> LlamaRequestConfig { get; set; }
         public DbSet<KnowledgeEntry> KnowledgeEntries { get; set; }
+        public DbSet<CompanyProfile> CompanyProfiles { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
